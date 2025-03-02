@@ -97,17 +97,17 @@ while True:
         laptop_cpumodel.append(cpu)
 
         try:
-            op_system = driver.find_element(By.XPATH, "//tr[@class='a-spacing-small po-operating_system']"
+            operating_system = driver.find_element(By.XPATH, "//tr[@class='a-spacing-small po-operating_system']"
                                                             "//td[@class='a-span9']"
                                                             "//span[@class='a-size-base po-break-word']").text
         except:
-            op_system = 'No op_system'
-        print('laptop_operating_system: ', op_system)
-        laptop_operating_system.append(op_system)
+            operating_system = 'No operating_system'
+        print('laptop_operating_system: ', operating_system)
+        laptop_operating_system.append(operating_system)
 
         try:
             price = driver.find_element(By.XPATH, "//div[@class='a-section a-spacing-none aok-align-center aok-relative']"
-                                                  "/following-sibling::span").text
+                                                  "//span[@class='a-price-whole']").text
         except:
             price = 'No price'
         print('laptop_price: ', price)
