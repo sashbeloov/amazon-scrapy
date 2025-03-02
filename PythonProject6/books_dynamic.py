@@ -302,3 +302,9 @@ df.to_csv('books_az.csv')
 #
 # df.to_csv('books_az.csv', index=False)
 # print("✅ 1000 ta kitob yig'ildi va 'books_az.csv' saqlandi!")
+
+
+# (By.XPATH, "//div[@class='a-price aok-align-center reinventPricePriceToPayMargin priceToPay']"
+#                                "//span[@aria-hidden='true']"
+#                                "//span[@class='a-price-symbol' and contains(text(), '₹')]"
+#                                "/following-sibling::span")))

@@ -34,7 +34,7 @@ while True:
     try:
         next_page = driver.find_element(By.XPATH, "//a[@class='s-pagination-item s-pagination-next s-pagination-button s-pagination-button-accessibility s-pagination-separator']")
         print(f"next_page_url {next_page}")
-        next_page_url = next_page.get_attribute('href')
+        url = next_page.get_attribute('href')
     except:
         print('This is the last page!')
         break
@@ -97,21 +97,28 @@ while True:
         laptop_cpumodel.append(cpu)
 
         try:
-            operating_system = driver.find_element(By.XPATH, "//tr[@class='a-spacing-small po-operating_system']"
-                                                            "//td[@class='a-span9']"
-                                                            "//span[@class='a-size-base po-break-word']").text
+            os_element = WebDriverWait(driver, 10).until(
+                expected_conditions.presence_of_element_located(
+                    (By.XPATH, "//tr[@class='a-spacing-small po-operating_system']/td[@class='a-span9']/span"))
+            )
+            operating_system = os_element.get_attribute("innerText").strip()  # text o'rniga innerText ishlatildi
         except:
-            operating_system = 'No operating_system'
-        print('laptop_operating_system: ', operating_system)
-        laptop_operating_system.append(operating_system)
+            operating_system = "Not Found"
+
+        print("Operating System:", operating_system)
 
         try:
-            price = driver.find_element(By.XPATH, "//div[@class='a-section a-spacing-none aok-align-center aok-relative']"
-                                                  "//span[@class='a-price-whole']").text
+            price = WebDriverWait(driver, 10).until(
+                expected_conditions.presence_of_element_located(
+                    (By.XPATH, "//div[@class='a-price aok-align-center reinventPricePriceToPayMargin priceToPay']"
+                               "/span[@aria-hidden='true']"
+                               "/span[@class='a-price-symbol' and contains(text(), '₹')]"
+                                 "/following-sibling::span")))
+            lap_price = price.get_attribute("innerText").strip()
         except:
-            price = 'No price'
-        print('laptop_price: ', price)
-        laptop_price.append(price)
+            lap_price = 'No price'
+        print('laptop_price: ', lap_price)
+        laptop_price.append(lap_price)
 
         try:
                 rating = driver.find_element(By.XPATH, "//span[@class='reviewCountTextLinkedHistogram noUnderline']").text
@@ -128,32 +135,35 @@ while True:
         laptop_review_count.append(review_count)
 
         try:
-            description = driver.find_element(By.XPATH, "//tr[@class='a-spacing-small po-graphics_description']"
-                                                        "//td[@class='a-span9']"
-                                                        "/following-sibling::span").text
+            description = WebDriverWait(driver, 10).until(
+                expected_conditions.presence_of_element_located(
+                    (By.XPATH, "//tr[@class='a-spacing-small po-graphics_description']/td[@class='a-span9']/span[@class='a-size-base po-break-word']")
+                )
+            )
+            new_desc = description.get_attribute("innerText").strip()
         except:
-            description = 'No description'
-        print(f'laptop_graphics_card_description:{description}')
+            new_desc = 'No description'
+        print(f'laptop_graphics_card_description:{new_desc}')
         print("\n")
-        laptop_graphics_card_description.append(description)
+        laptop_graphics_card_description.append(new_desc)
 
         count += 1
 
-df = pd.DataFrame(
-    {
-        'laptop-brand': [laptop_brand],
-        'laptop-model': [laptop_model],
-        'laptop-screensize': [laptop_screensize],
-        'laptop-ram': [laptop_ram],
-        'laptop-storage': [laptop_storage],
-        'laptop-cpu': [laptop_cpumodel],
-        'laptop-operating_system': [laptop_operating_system],
-        'laptop-price': [laptop_price],
-        'laptop-rating': [laptop_rating],
-        'laptop-review_count': [laptop_review_count],
-        'laptop-graphics_card_description': [laptop_graphics_card_description],
-
-    }
-)
-df.to_csv('laptops.csv')
+# df = pd.DataFrame(
+#     {
+#         'laptop-brand': [laptop_brand],
+#         'laptop-model': [laptop_model],
+#         'laptop-screensize': [laptop_screensize],
+#         'laptop-ram': [laptop_ram],
+#         'laptop-storage': [laptop_storage],
+#         'laptop-cpu': [laptop_cpumodel],
+#         'laptop-operating_system': [laptop_operating_system],
+#         'laptop-price': [laptop_price],
+#         'laptop-rating': [laptop_rating],
+#         'laptop-review_count': [laptop_review_count],
+#         'laptop-graphics_card_description': [laptop_graphics_card_description],
+#
+#     }
+# )
+# df.to_csv('laptops.csv')
 
