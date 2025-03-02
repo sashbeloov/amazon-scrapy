@@ -97,28 +97,23 @@ while True:
         laptop_cpumodel.append(cpu)
 
         try:
-            os_element = WebDriverWait(driver, 10).until(
-                expected_conditions.presence_of_element_located(
-                    (By.XPATH, "//tr[@class='a-spacing-small po-operating_system']/td[@class='a-span9']/span"))
-            )
-            operating_system = os_element.get_attribute("innerText").strip()  # text o'rniga innerText ishlatildi
+            operating_system = driver.find_element(By.XPATH,
+                                                   "//th[@class='a-color-secondary a-size-base prodDetSectionEntry' and contains(text(), 'Operating System')]"
+                                                   "/following-sibling::td").text
         except:
-            operating_system = "Not Found"
-
-        print("Operating System:", operating_system)
+            operating_system = 'No operating_system'
+        print('Operating_system:', operating_system)
+        laptop_operating_system.append(operating_system)
 
         try:
-            price = WebDriverWait(driver, 10).until(
-                expected_conditions.presence_of_element_located(
-                    (By.XPATH, "//div[@class='a-price aok-align-center reinventPricePriceToPayMargin priceToPay']"
-                               "/span[@aria-hidden='true']"
-                               "/span[@class='a-price-symbol' and contains(text(), '₹')]"
-                                 "/following-sibling::span")))
-            lap_price = price.get_attribute("innerText").strip()
+            price = driver.find_element(By.XPATH,
+                                        "//span[@class='a-price aok-align-center reinventPricePriceToPayMargin priceToPay']"
+                                        "//span"
+                                        "//span[@class='a-price-whole']").text
         except:
-            lap_price = 'No price'
-        print('laptop_price: ', lap_price)
-        laptop_price.append(lap_price)
+            price = 'No price'
+        print('laptop_price: ', price)
+        laptop_price.append(price)
 
         try:
                 rating = driver.find_element(By.XPATH, "//span[@class='reviewCountTextLinkedHistogram noUnderline']").text
@@ -135,19 +130,25 @@ while True:
         laptop_review_count.append(review_count)
 
         try:
-            description = WebDriverWait(driver, 10).until(
-                expected_conditions.presence_of_element_located(
-                    (By.XPATH, "//tr[@class='a-spacing-small po-graphics_description']/td[@class='a-span9']/span[@class='a-size-base po-break-word']")
-                )
-            )
-            new_desc = description.get_attribute("innerText").strip()
+            description = driver.find_element(By.XPATH,
+                                              "//tr[@class='a-spacing-small po-graphics_description']"
+                                              "/td[2]/span").get_attribute("innerText").strip()
         except:
-            new_desc = 'No description'
-        print(f'laptop_graphics_card_description:{new_desc}')
+            description = 'No description'
+
+        print(f'laptop_graphics_card_description:{description}')
         print("\n")
-        laptop_graphics_card_description.append(new_desc)
+        laptop_graphics_card_description.append(description)
 
         count += 1
+
+        # try:
+        #     description = driver.find_element(By.XPATH,
+        #                                       "//tr[@class='a-spacing-small po-graphics_description']"
+        #                                       "//td//span[@class='a-size-base a-text-bold' and contains(text(), 'Graphics Card Description')]"
+        #                                       "/parent::td/following-sibling::td/span").text.strip()
+        # except:
+        #     description = 'No description'
 
 # df = pd.DataFrame(
 #     {
@@ -166,4 +167,129 @@ while True:
 #     }
 # )
 # df.to_csv('laptops.csv')
+# df = pd.DataFrame(
+#     {
 
+# from selenium import webdriver
+# from selenium.webdriver.chrome.service import Service
+# from selenium.webdriver.common.by import By
+# from selenium.webdriver.support import expected_conditions as EC
+# from selenium.webdriver.support.ui import WebDriverWait
+# from webdriver_manager.chrome import ChromeDriverManager
+# import pandas as pd
+#
+# driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()))
+# book_titles = []
+# book_authors = []
+# book_prices = []
+# book_ratings = []
+# book_pages = []
+# book_languages = []
+# book_publishers = []
+# reading_ages = []
+# feedback_summaries = []
+#
+# count = 0  # Nechta kitob yig'ildi
+# max_books = 50  # Maksimal kitob soni
+# next_page_url = 'https://www.amazon.in/s?k=books'
+#
+# while count < max_books:  # Faqat 50 ta kitob yig'ilgunga qadar ishlaydi
+#     book_links = []
+#
+#     driver.get(next_page_url)
+#
+#     # Keyingi sahifani topish
+#     try:
+#         next_page = driver.find_element(By.XPATH, "//a[contains(@class, 's-pagination-next')]")
+#         next_page_url = next_page.get_attribute('href')
+#     except:
+#         print('This is the last page!')
+#         break
+#
+#     # Kitoblarning URL larini olish
+#     book_urls = driver.find_elements(By.XPATH, "//a[@class='a-link-normal s-line-clamp-2 s-link-style a-text-normal']")
+#     for url in book_urls:
+#         if count >= max_books:  # Agar 50 ta yig'ilsa, loopdan chiqish
+#             break
+#         book_links.append(url.get_attribute('href'))
+#
+#     # Har bir kitob uchun ma'lumot olish
+#     for link in book_links:
+#         if count >= max_books:  # 50 ta bo'lsa, loopdan chiqamiz
+#             break
+#         driver.get(link)
+#
+#         try:
+#             title = driver.find_element(By.XPATH, "//span[@id='productTitle']").text
+#         except:
+#             title = 'No title'
+#         book_titles.append(title)
+#
+#         try:
+#             author = driver.find_element(By.XPATH, "//span[@class='author notFaded']//a").text
+#         except:
+#             author = 'No author'
+#         book_authors.append(author)
+#
+#         try:
+#             price = WebDriverWait(driver, 10).until(
+#                 EC.presence_of_element_located((By.XPATH, "//span[@class='a-price-whole']"))).text
+#             price = float(price.replace(',', ''))
+#         except:
+#             price = 'No price'
+#         book_prices.append(price)
+#
+#         try:
+#             rating = driver.find_element(By.XPATH, "//span[@id='acrPopover']").get_attribute('title')
+#             book_ratings.append(float(rating.split(' ')[0]))
+#         except:
+#             book_ratings.append(0.0)  # Agar rating topilmasa, 0 qo'yamiz
+#
+#         try:
+#             page = driver.find_element(By.XPATH, "//span[contains(text(), 'pages')]").text
+#             book_pages.append(int(page.split(' ')[0]))
+#         except:
+#             book_pages.append(0)  # Agar page topilmasa, 0 qo'yamiz
+#
+#         try:
+#             language = driver.find_element(By.XPATH, "//div[@id='rpi-attribute-language']//span").text
+#         except:
+#             language = 'No language'
+#         book_languages.append(language)
+#
+#         try:
+#             publisher = driver.find_element(By.XPATH, "//div[@id='rpi-attribute-book_details-publisher']//span").text
+#         except:
+#             publisher = 'No publisher'
+#         book_publishers.append(publisher)
+#
+#         try:
+#             age = driver.find_element(By.XPATH, "//span[contains(text(), 'Reading age')]/following-sibling::span").text
+#             age = int(age.split(' ')[0])
+#         except:
+#             age = 0  # Agar yosh topilmasa, 0 qo'yamiz
+#         reading_ages.append(age)
+#
+#         try:
+#             feedback = driver.find_element(By.XPATH, "//div[@id='product-summary']//p").text
+#         except:
+#             feedback = 'No feedback summary'
+#         feedback_summaries.append(feedback)
+#
+#         count += 1  # Yig'ilgan kitoblar sonini oshiramiz
+#
+# # Ma'lumotlarni CSV faylga saqlash
+# df = pd.DataFrame({
+#     'title': book_titles,
+#     'author': book_authors,
+#     'price': book_prices,
+#     'rating': book_ratings,
+#     'language': book_languages,
+#     'publisher': book_publishers,
+#     'age': reading_ages,
+#     'page': book_pages,
+#     'feedback_summary': feedback_summaries
+# })
+#
+# df.to_csv('books_az.csv', index=False)
+# print("✅ 50 ta kitob yig'ildi va 'books_az.csv' saqlandi!")
